@@ -1,5 +1,7 @@
 
 using System.Text;
+using BooksApplicationService.API.Config;
+using BooksApplicationService.API.Middleware;
 using BooksApplicationService.API.Model.Data;
 using BooksApplicationService.API.Model.Entities;
 using BooksApplicationService.API.Model.Interfaces;
@@ -67,9 +69,23 @@ namespace BooksApplicationService.API
 
             // 5. Inject the OData and other necessary services
             builder.Services.AddOData();
+
+
+            //Dependency injection
             builder.Services.AddTransient<ITokenService, TokenService>();
+            builder.Services.AddTransient<IGreetingsService, GreetingsService>();
+
+
+            //Configuration injection
+            builder.Services.Configure<MySettings>(builder.Configuration.GetSection("MySettings"));
+
 
             var app = builder.Build();
+
+
+            // Use middleware
+            app.UseMiddleware<RequestResponseLoggingMiddleware>();
+            app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

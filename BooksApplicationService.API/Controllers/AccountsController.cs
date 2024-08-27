@@ -13,12 +13,14 @@ namespace BooksApplicationService.API.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ITokenService _tokenService;
+        private readonly ILogger<AccountsController> _logger;
 
-        public AccountsController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ITokenService tokenService)
+        public AccountsController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ITokenService tokenService, ILogger<AccountsController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
+            _logger = logger;
         }
 
 
@@ -45,13 +47,16 @@ namespace BooksApplicationService.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
+            _logger.LogInformation("User {Username} attempted to log in.", model.Username);
             var user = await _userManager.FindByNameAsync(model.Username);
-
             if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password))
             {
-                return Unauthorized();
+                _logger.LogWarning("User {Username} failed to log in.", model.Username);
+                return Unauthorized("Invalid credentials.");
             }
 
+
+            _logger.LogInformation("User {Username} logged in successfully.", model.Username);
             var token = _tokenService.GenerateToken(user);
             return Ok(new { Token = token });
         }
