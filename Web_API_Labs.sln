@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35027.167
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web_API_Labs", "Web_API_Labs\Web_API_Labs.csproj", "{487750A1-A686-49A1-92C7-E7ACD1B9F3D5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lab_1", "Lab_1", "{8429D9C5-AF54-425D-AF40-798DECE5C078}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooksApplicationService.API", "BooksApplicationService.API\BooksApplicationService.API.csproj", "{E9C258D1-D3DB-4CEE-8B1B-0C695A1D0DDF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{487750A1-A686-49A1-92C7-E7ACD1B9F3D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{487750A1-A686-49A1-92C7-E7ACD1B9F3D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{487750A1-A686-49A1-92C7-E7ACD1B9F3D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{487750A1-A686-49A1-92C7-E7ACD1B9F3D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9C258D1-D3DB-4CEE-8B1B-0C695A1D0DDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9C258D1-D3DB-4CEE-8B1B-0C695A1D0DDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9C258D1-D3DB-4CEE-8B1B-0C695A1D0DDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9C258D1-D3DB-4CEE-8B1B-0C695A1D0DDF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E9C258D1-D3DB-4CEE-8B1B-0C695A1D0DDF} = {8429D9C5-AF54-425D-AF40-798DECE5C078}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E256E9B6-33BA-49C2-B918-BAC13732FCDF}
+	EndGlobalSection
+EndGlobal
