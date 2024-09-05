@@ -1,5 +1,6 @@
 ﻿using BooksApplicationService.API.Model.Data;
 using BooksApplicationService.API.Model.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,7 @@ namespace BooksApplicationService.API.Controllers
 
         //GET : .../api/books
         [HttpGet]
+        [Authorize]
 
         public async Task<IEnumerable<Book>> GetAllBooksAsync()
         {
@@ -30,6 +32,7 @@ namespace BooksApplicationService.API.Controllers
         [Consumes("application/json")]
         [ProducesResponseType<Book>(StatusCodes.Status201Created)]
         [ProducesResponseType<Book>(StatusCodes.Status400BadRequest)]
+        
         public async Task<ActionResult> Add([FromBody]Book book)
         {
             //Validate
@@ -50,6 +53,7 @@ namespace BooksApplicationService.API.Controllers
         [ProducesResponseType<Book>(StatusCodes.Status404NotFound)]
         [ProducesResponseType<Book>(StatusCodes.Status400BadRequest)]
         [ProducesResponseType<Book>(StatusCodes.Status200OK)]
+        [Authorize]
         public async Task<ActionResult> Update([FromQuery] int id, [FromBody] Book book)
         {
             var b=await _db.NewBooks.FindAsync(id);
@@ -73,6 +77,7 @@ namespace BooksApplicationService.API.Controllers
 
         //DELETE : .../api/books/{id}
         [HttpDelete]
+        [Authorize]
         [Consumes("application/json")]
         [ProducesResponseType<Book>(StatusCodes.Status404NotFound)]
         [ProducesResponseType<Book>(StatusCodes.Status200OK)]

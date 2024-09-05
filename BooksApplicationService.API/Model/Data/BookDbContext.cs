@@ -6,7 +6,7 @@ using Microsoft.Identity.Client;
 
 namespace BooksApplicationService.API.Model.Data
 {
-    public class BookDbContext:IdentityDbContext<ApplicationUser>
+    public class BookDbContext:IdentityDbContext<IdentityUser>
     {
 
         public BookDbContext() { }

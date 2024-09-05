@@ -22,19 +22,26 @@ namespace BooksApplicationService.API
 
             // Add services to the container.
 
-            // 1. Configure the EF Core with your connection string
-            string conStr = builder.Configuration.GetConnectionString("Default");
+            // Configure database 
+            string connectionString = builder.Configuration.GetConnectionString("Default");
             builder.Services.AddDbContext<BookDbContext>(options =>
-            {
-                options.UseSqlServer(conStr);
-            });
+                options.UseSqlServer(connectionString)
+            );
 
-            // 2. Add Identity services and configure JWT authentication 
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-                            .AddEntityFrameworkStores<BookDbContext>()
-                            .AddDefaultTokenProviders();
+            // DI
+            
+            builder.Services.AddTransient<ITokenService, TokenService>();
+            builder.Services.AddTransient<IGreetingsService, GreetingsService>();
 
-            // 3. Add JWT Authentication
+            // Configuration injection
+            builder.Services.Configure<MySettings>(builder.Configuration.GetSection("MySettings"));
+
+            // Add Identity services
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<BookDbContext>()
+                .AddDefaultTokenProviders();
+
+            // Add Authentication
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -42,50 +49,45 @@ namespace BooksApplicationService.API
             })
             .AddJwtBearer(options =>
             {
-                options.TokenValidationParameters = new TokenValidationParameters
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters()
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    ValidAudience = builder.Configuration["Jwt:Issuer"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+                    ClockSkew = TimeSpan.Zero
                 };
             });
 
-            builder.Services.AddControllers()
-                .AddXmlDataContractSerializerFormatters()
-                .AddNewtonsoftJson();
+            builder.Services.AddControllers().AddXmlSerializerFormatters().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            
-
-            // 4. Add Authorization (this is required to protect your endpoints)
-            builder.Services.AddAuthorization();
-
-            // 5. Inject the OData and other necessary services
-            builder.Services.AddOData();
-
-
-            //Dependency injection
-            builder.Services.AddTransient<ITokenService, TokenService>();
-            builder.Services.AddTransient<IGreetingsService, GreetingsService>();
-
-
-            //Configuration injection
-            builder.Services.Configure<MySettings>(builder.Configuration.GetSection("MySettings"));
-
+            // CORS
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyMethod()
+                           .AllowAnyHeader();
+                });
+            });
 
             var app = builder.Build();
 
-
-            // Use middleware
-            app.UseMiddleware<RequestResponseLoggingMiddleware>();
-            app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+            // Middleware
+            // app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+            // app.UseMiddleware<RequestResponseLoggingMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -93,19 +95,10 @@ namespace BooksApplicationService.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
             app.UseHttpsRedirection();
-            app.UseRouting();
 
-            // 6. Use Authentication and Authorization middlewares
             app.UseAuthentication();
             app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.EnableDependencyInjection();
-                endpoints.Select().OrderBy().Filter().MaxTop(100).SkipToken().Count();
-            });
 
             app.MapControllers();
 

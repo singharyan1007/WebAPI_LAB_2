@@ -17,7 +17,7 @@ namespace BooksApplicationService.API.Controllers
         }
 
 
-        [HttpGet("{name:string}")]
+        [HttpGet("{name:alpha}")]
         public IActionResult Greet(string name)
         {
             var greeting = _greetingService.Greet(name);
